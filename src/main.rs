@@ -7,7 +7,9 @@ fn task(n: usize) {
 
     for _ in 0..n {
         let v = *heap.top().unwrap();
-        while *heap.top().unwrap() == v { heap.pop(); }
+        while *heap.top().unwrap() == v {
+            heap.pop();
+        }
 
         print!("{} ", v);
         for i in [v * 2, v * 3, v * 5] {

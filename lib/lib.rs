@@ -1,11 +1,16 @@
-mod lca;
+mod string_search;
 mod sortings;
 mod trees;
 
+pub use crate::string_search::*;
 pub use crate::sortings::*;
 pub use crate::trees::*;
 
-pub fn range(from: usize, to: usize, step: i32) -> std::iter::FromFn<impl FnMut() -> Option<usize>> {
+pub fn range(
+    from: usize,
+    to: usize,
+    step: i32,
+) -> std::iter::FromFn<impl FnMut() -> Option<usize>> {
     let mut from = from as i32;
     let to = to as i32;
 

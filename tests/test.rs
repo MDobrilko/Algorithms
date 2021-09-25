@@ -136,3 +136,14 @@ fn test_range() {
     range(11, 0, -2).for_each(|i| print!("{} ", i));
     println!();
 }
+
+#[test]
+fn test_knuth_morris_pratt() {
+    assert_eq!(knuth_morris_pratt(b"cat", b"cat"), Some(0));
+    assert_eq!(knuth_morris_pratt(b"docadosfascat", b"cat"), Some(10));
+    assert_eq!(knuth_morris_pratt(b"doogdog", b"dog"), Some(4));
+    assert_eq!(knuth_morris_pratt(b"dokcogdogddddooog", b"dog"), Some(6));
+    assert_eq!(knuth_morris_pratt(b"doogbog", b"dog"), None);
+    assert_eq!(knuth_morris_pratt(b"", b"some"), None);
+    assert_eq!(knuth_morris_pratt(b"som", b"some"), None);
+}
