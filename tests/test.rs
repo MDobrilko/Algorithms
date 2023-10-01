@@ -53,7 +53,7 @@ fn test_merge_sort() {
     let mut data = get_data();
     let mut sorted_data = data.clone();
     sorted_data.sort();
-    assert_eq!(merge_sort(&mut data), sorted_data);
+    assert_eq!(merge_sort(&mut data), sorted_data.into_boxed_slice());
 }
 
 #[test]
