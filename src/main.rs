@@ -1,7 +1,7 @@
 use algorithms;
 
 fn task(n: usize) {
-    let mut heap = algorithms::Heap::new();
+    let mut heap = algorithms::trees::Heap::new();
 
     [2, 3, 5].iter().for_each(|elem| heap.push(*elem));
 
@@ -19,5 +19,5 @@ fn task(n: usize) {
 }
 
 fn main() {
-    task(10);
+    println!("Hello world");
 }

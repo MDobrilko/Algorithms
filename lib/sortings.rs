@@ -1,7 +1,8 @@
 use rand::seq::SliceRandom;
 use std::cmp::Ordering;
+use crate::range;
 
-pub fn bubble_sort<T: Ord>(data: &mut Vec<T>) {
+pub fn bubble_sort<T: Ord>(data: &mut [T]) {
     for i in 1..data.len() {
         let mut j = i;
         while j > 0 && data[j] < data[j - 1] {
@@ -11,7 +12,7 @@ pub fn bubble_sort<T: Ord>(data: &mut Vec<T>) {
     }
 }
 
-pub fn choice_sort<T: Ord>(data: &mut Vec<T>) {
+pub fn choice_sort<T: Ord>(data: &mut [T]) {
     for i in 0..(data.len() - 1) {
         let min_idx = data
             .iter()
@@ -26,7 +27,7 @@ pub fn choice_sort<T: Ord>(data: &mut Vec<T>) {
     }
 }
 
-pub fn exchange_sort<T: Ord>(data: &mut Vec<T>) {
+pub fn exchange_sort<T: Ord>(data: &mut [T]) {
     for i in 0..(data.len() - 1) {
         for j in (i + 1)..data.len() {
             if data[i] > data[j] {
@@ -36,39 +37,46 @@ pub fn exchange_sort<T: Ord>(data: &mut Vec<T>) {
     }
 }
 
-pub fn merge_sort<T: Ord + Copy>(data: &[T]) -> Vec<T> {
-    let mut sorted = Vec::with_capacity(data.len());
-
-    let left_idx = 0;
-    let right_idx = data.len();
-    let mid_idx = (left_idx + right_idx) / 2;
-
-    if right_idx - left_idx <= 1 {
-        sorted.extend_from_slice(data);
-        return sorted;
+// TODO - add allocator when std::alloc::Allocator will be stable
+pub fn merge_sort<T: Ord + Copy>(data: &[T]) -> Box<[T]> {
+    if data.len() <= 1 {
+        return data.into();
     }
 
-    let sorted_left_side = merge_sort(&data[left_idx..mid_idx]);
-    let sorted_right_size = merge_sort(&data[mid_idx..right_idx]);
+	let mut sorted = Vec::with_capacity(data.len());
+    let mid_idx = data.len() / 2;
 
-    let mut left_iter = sorted_left_side.iter().peekable();
-    let mut right_iter = sorted_right_size.iter().peekable();
+    let sorted_left_side = merge_sort(&data[..mid_idx]);
+    let sorted_right_side = merge_sort( &data[mid_idx..]);
+
+    let mut left_idx = 0;
+    let mut right_idx = 0;
+
     loop {
-        sorted.push(match (left_iter.peek(), right_iter.peek()) {
-            (Some(&&left_num), Some(&&right_num)) => {
-                if left_num <= right_num {
-                    *left_iter.next().unwrap()
-                } else {
-                    *right_iter.next().unwrap()
-                }
-            }
-            (Some(_), None) => *left_iter.next().unwrap(),
-            (None, Some(_)) => *right_iter.next().unwrap(),
-            (None, None) => break,
-        });
+        if left_idx == sorted_left_side.len() || right_idx == sorted_right_side.len() {
+            break;
+        }
+
+		match sorted_left_side[left_idx].cmp(&sorted_right_side[right_idx]) {
+			Ordering::Equal => {
+				sorted.push(sorted_left_side[left_idx]);
+				sorted.push(sorted_right_side[right_idx]);
+				
+				left_idx += 1;
+				right_idx += 1;
+			},
+			Ordering::Greater => {
+				sorted.push(sorted_right_side[right_idx]);
+				right_idx += 1;
+			},
+			Ordering::Less => {
+				sorted.push(sorted_left_side[left_idx]);
+				left_idx += 1;
+			},
+		}
     }
 
-    sorted
+    sorted.into_boxed_slice()
 }
 
 pub fn quick_sort<T: Ord + Copy>(data: &mut [T]) {
@@ -145,21 +153,6 @@ pub fn shellsort<T: Ord + Copy>(data: &mut [T]) {
         series_size = 3 * series_size + 1;
     }
 
-    let range = |from: usize, to: usize, step: i32| {
-        let mut from = from as i32;
-        let to = to as i32;
-
-        std::iter::from_fn(move || {
-            if (step < 0 && from < to) || (step > 0 && from > to) {
-                None
-            } else {
-                let res = Some(from as usize);
-                from += step;
-                res
-            }
-        })
-    };
-
     let mut step = series_size as i32;
     while series_size > 0 {
         for offset in 0..series_size {
@@ -184,11 +177,11 @@ pub fn shellsort<T: Ord + Copy>(data: &mut [T]) {
 pub fn counting_sort(data: &[usize]) -> Vec<usize> {
     let mut sorted = Vec::with_capacity(data.len());
 
-    let mut counts = Vec::new();
+    let mut counts: Vec<usize> = Vec::new();
 
     for &elem in data {
         if elem >= counts.len() {
-            counts.resize(elem + 1, 0usize);
+            counts.resize(elem + 1, 0);
         }
         counts[elem] += 1;
     }
@@ -203,7 +196,7 @@ pub fn counting_sort(data: &[usize]) -> Vec<usize> {
 }
 
 pub fn heapsort<T: Ord + Copy>(data: &mut [T]) -> Vec<T> {
-    let mut heap = crate::Heap::new();
+    let mut heap = crate::trees::Heap::new();
 
     data.iter().for_each(|&elem| heap.push(elem));
 

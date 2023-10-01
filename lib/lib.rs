@@ -1,10 +1,5 @@
-mod string_search;
-mod sortings;
-mod trees;
-
-pub use crate::string_search::*;
-pub use crate::sortings::*;
-pub use crate::trees::*;
+pub mod sortings;
+pub mod trees;
 
 pub fn range(
     from: usize,
