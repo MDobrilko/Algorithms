@@ -1,8 +1,5 @@
-mod sortings;
-mod trees;
-
-pub use crate::sortings::*;
-pub use crate::trees::*;
+pub mod sortings;
+pub mod trees;
 
 pub fn range(
     from: usize,

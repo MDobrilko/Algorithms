@@ -1,4 +1,7 @@
-use algorithms::*;
+use algorithms::{
+	sortings::*,
+	trees::*,
+};
 use rand::prelude::*;
 
 fn get_data() -> Vec<i32> {

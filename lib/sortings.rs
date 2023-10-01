@@ -196,7 +196,7 @@ pub fn counting_sort(data: &[usize]) -> Vec<usize> {
 }
 
 pub fn heapsort<T: Ord + Copy>(data: &mut [T]) -> Vec<T> {
-    let mut heap = crate::Heap::new();
+    let mut heap = crate::trees::Heap::new();
 
     data.iter().for_each(|&elem| heap.push(elem));
 
