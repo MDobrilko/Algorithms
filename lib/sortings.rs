@@ -46,8 +46,8 @@ pub fn merge_sort<T: Ord + Copy>(data: &[T]) -> Box<[T]> {
 	let mut sorted = Vec::with_capacity(data.len());
     let mid_idx = data.len() / 2;
 
-    let sorted_left_side = merge_sort(&data[..mid_idx]);
-    let sorted_right_side = merge_sort( &data[mid_idx..]);
+    let sorted_left_side = merge_sort(&data[..mid_idx]).into_vec();
+    let sorted_right_side = merge_sort( &data[mid_idx..]).into_vec();
 
     let mut left_idx = 0;
     let mut right_idx = 0;
@@ -75,6 +75,12 @@ pub fn merge_sort<T: Ord + Copy>(data: &[T]) -> Box<[T]> {
 			},
 		}
     }
+	for i in left_idx..sorted_left_side.len() {
+		sorted.push(sorted_left_side[i]);
+	}
+	for i in right_idx..sorted_right_side.len() {
+		sorted.push(sorted_right_side[i]);
+	}
 
     sorted.into_boxed_slice()
 }
